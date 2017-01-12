@@ -1,0 +1,24 @@
+{
+  "name": "CDN button",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Add a link button to rawgit.cdn",
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": [
+      "bower_components/jquery/dist/jquery.min.js",
+      "content.js"
+    ]
+  }],
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "CDN button",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+      "tabs",
+      "http://github.com/",
+      "https://github.com/"
+  ]
+}
