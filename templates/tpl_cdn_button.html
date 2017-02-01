@@ -1,0 +1,33 @@
+<template id="tpl_cdn_button">
+
+	<div class="select-menu js-menu-container js-select-menu cdn-menu-wrapper">
+		<a href="{{cdnUrl}}" class="btn btn-sm select-menu-button js-menu-target" target="_blank">CDN &nbsp;</a>
+
+
+		<div class="select-menu-modal-holder" aria-hidden="false" aria-expanded="true">
+			<div class="select-menu-modal">
+				<div class="select-menu-list js-navigation-container js-active-navigation-container" role="menu">
+					<div class="select-menu-item js-navigation-item navigation-focus" role="menuitem" tabindex="0">
+						<div class="select-menu-item-text">
+							<a href="{{cdnUrl}}" target="_blank">Open URL</a>
+						</div>
+					</div>
+					<div class="select-menu-item js-navigation-item navigation-focus" role="menuitem" tabindex="0">
+						<div class="select-menu-item-text">
+							<a href="javascript:void(0)" class="copy-btn" data-clipboard="{{cdnUrl}}">Copy URL</a>
+						</div>
+					</div>
+
+					<div class="select-menu-item js-navigation-item selected" role="menuitem" tabindex="0">
+						<div class="select-menu-item-text">
+							<a href="javascript:void(0)" class="copy-btn" data-clipboard="{{scriptTag}}">Copy Script Tag</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<textarea class="clipboard-area"></textarea>
+</template>
+

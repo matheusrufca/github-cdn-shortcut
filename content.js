@@ -1,53 +1,130 @@
-$(function() {
-		var self = {};
+$(function () {
+	var self = {};
 
-		function init() {
-			console.debug('init');
+	function init() {
+		console.debug('init');
 
-			if(window.location.host != "github.com"){ return; }
+		if (window.location.host != "github.com") { return; }
 
-			self.rawUrl = _getRawUrl();
+		self.rawUrl = _getRawUrl();
+
+		injectTemplate(); //inject template on document and create buttons
+	};
+
+
+	function injectTemplate() {
+		$.get(chrome.extension.getURL('templates/tpl_cdn_button.html'), function (data) {
+			$(data).appendTo('body');
+
 
 			createCdnButton();
-		};
+		});
+	};
 
-		function createCdnButton() {
-			var cdnUrl,  $btn, btnTpl = '<a href="<cdnUrl>" class="btn btn-sm js-update-url-with-hash BtnGroup-item" target="_blank">CDN</a>';
-			var $btnContainer = $('.file .file-header .file-actions .BtnGroup');
-
-			cdnUrl = _getCdnUrl(self.rawUrl || '');
-			$btn = $(btnTpl.replace('<cdnUrl>', cdnUrl));
-
-			$btnContainer.append($btn);
-		};
-
-		function _getRawUrl() {
-			return $('a#raw-url').attr('href');
-		};
-
-		function _getCdnUrl(rawUrl) {
-			var cdnUrl,
-			splittedCdnUrl,
-			cdnUrlTpl = 'cdn.rawgit.com/<user>/<repo>/<tag>/<file>';
-			
-			splittedCdnUrl = _removeHttpOrHttps(rawUrl || '').split('/');
-
-			cdnUrl = cdnUrlTpl
-				.replace('<user>', splittedCdnUrl[1])
-				.replace('<repo>', splittedCdnUrl[2])
-				.replace('<tag>', splittedCdnUrl[4])
-				.replace('<file>', splittedCdnUrl[5]);
-
-				console.debug('raw: '+ rawUrl);
-				console.debug('cdn: '+ ['https://', cdnUrl].join(''));
+	function createCdnButton() {
+		var cdnUrl, scriptTagUrl, btnTpl, rawCdnButton;
+		var $cdnButton, $btnContainer = $('.file .file-header .file-actions .BtnGroup');
 
 
-			return ['https://', cdnUrl].join('');
-		};
+		btnTpl = $('#tpl_cdn_button').html();
+		cdnUrl = _getCdnUrl(self.rawUrl || '');
+		scriptTagUrl = _getCdnScript(cdnUrl || '');
 
-		function _removeHttpOrHttps(url) {
-			return (url || '').replace(/^(https?:|)\/\//, '');
-		};
 
-		init();
-	});
+		rawCdnButton = S(btnTpl)
+			.replaceAll('{{cdnUrl}}', cdnUrl)
+			.replaceAll('{{scriptTag}}', scriptTagUrl)
+			.s;
+
+		$cdnButton = $(rawCdnButton);
+
+		$btnContainer.after($cdnButton);
+	};
+
+
+	function createCdnButton_old() {
+		var cdnUrl, $btn, btnTpl = '<a href="{{cdnUrl}}" class="btn btn-sm js-update-url-with-hash BtnGroup-item" target="_blank">CDN</a>';
+		var $btnContainer = $('.file .file-header .file-actions .BtnGroup');
+
+		cdnUrl = _getCdnUrl(self.rawUrl || '');
+		$btn = $(btnTpl.replace('{{cdnUrl}}', cdnUrl));
+
+		$btnContainer.append($btn);
+	};
+
+
+
+	function _getRawUrl() {
+		return $('a#raw-url').attr('href');
+	};
+
+
+	function _getCdnUrl(rawUrl) {
+		var cdnUrl,
+		splittedCdnUrl,
+		cdnUrlTpl = 'cdn.rawgit.com/<user>/<repo>/<tag>/<file>';
+
+		splittedCdnUrl = _removeHttpOrHttps(rawUrl || '').split('/');
+
+		cdnUrl = cdnUrlTpl
+			.replace('<user>', splittedCdnUrl[1])
+			.replace('<repo>', splittedCdnUrl[2])
+			.replace('<tag>', splittedCdnUrl[4])
+			.replace('<file>', splittedCdnUrl[5]);
+
+		console.debug('raw: ' + rawUrl);
+		console.debug('cdn: ' + ['https://', cdnUrl].join(''));
+
+
+		return ['https://', cdnUrl].join('');
+	};
+
+
+	function _getCdnScript(cdnUrl) {
+		var output, tplScriptTag = '<script src="{{cdnUrl}}"></script>';
+
+		output = S(tplScriptTag)
+			.replaceAll('{{cdnUrl}}', cdnUrl)
+			.replaceAll('"', "'")
+			.s;
+
+		return output;
+	};
+
+
+	function _removeHttpOrHttps(url) {
+		return (url || '').replace(/^(https?:|)\/\//, '');
+	};
+
+
+	function _onCopyClick(event) {
+		var text, $clipboardArea = $('.clipboard-area');
+
+		text = $(event.target).data('clipboard');
+		text = S(text).replaceAll("'", '"').s;
+
+		$clipboardArea.val(text);
+
+		try {
+			var successful, msg;
+
+			$clipboardArea[0].select();
+			successful = document.execCommand('copy');
+			msg = successful ? 'successful' : 'unsuccessful';
+
+
+			console.debug('Copying text command was ' + msg);
+			console.debug(['"', text, '" copied.'].join(''));
+		} catch (err) {
+			console.error('Oops, unable to copy');
+		} finally {
+			$clipboardArea.val('');
+		}
+	};
+
+
+	init();
+
+
+	$(document).on('click', 'a.copy-btn', _onCopyClick);
+});

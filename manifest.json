@@ -1,24 +1,32 @@
 {
-  "name": "CDN button",
-  "version": "0.0.1",
-  "manifest_version": 2,
-  "description": "Add a link button to rawgit.cdn",
-  "content_scripts": [{
-    "matches": ["http://*/*", "https://*/*"],
-    "js": [
-      "bower_components/jquery/dist/jquery.min.js",
-      "content.js"
-    ]
-  }],
+	"name": "CDN button",
+	"version": "0.0.1",
+	"manifest_version": 2,
+	"description": "Add a link button to rawgit.cdn",
+	"content_scripts": [
+		{
+			"matches": [ "http://*/*", "https://*/*" ],
+					"js": [
+						"bower_components/jquery/dist/jquery.min.js",
+						"bower_components/string/dist/string.js",
+						"content.js"
+					],
+			"css": [ "css/styles.css" ]
+		}
+	],
 
-  "browser_action": {
-    "default_icon": "icon.png",
-    "default_title": "CDN button",
-    "default_popup": "popup.html"
-  },
-  "permissions": [
-      "tabs",
-      "http://github.com/",
-      "https://github.com/"
-  ]
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_title": "CDN button",
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+		"tabs",
+		"http://github.com/",
+		"https://github.com/"
+	],
+	"web_accessible_resources": [
+		"styles/*",
+		"templates/*"
+	]
 }
