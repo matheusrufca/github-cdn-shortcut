@@ -41,18 +41,7 @@ $(function () {
 		$btnContainer.after($cdnButton);
 	};
 
-
-	function createCdnButton_old() {
-		var cdnUrl, $btn, btnTpl = '<a href="{{cdnUrl}}" class="btn btn-sm js-update-url-with-hash BtnGroup-item" target="_blank">CDN</a>';
-		var $btnContainer = $('.file .file-header .file-actions .BtnGroup');
-
-		cdnUrl = _getCdnUrl(self.rawUrl || '');
-		$btn = $(btnTpl.replace('{{cdnUrl}}', cdnUrl));
-
-		$btnContainer.append($btn);
-	};
-
-
+	
 
 	function _getRawUrl() {
 		return $('a#raw-url').attr('href');
@@ -109,12 +98,7 @@ $(function () {
 			var successful, msg;
 
 			$clipboardArea[0].select();
-			successful = document.execCommand('copy');
-			msg = successful ? 'successful' : 'unsuccessful';
-
-
-			console.debug('Copying text command was ' + msg);
-			console.debug(['"', text, '" copied.'].join(''));
+			document.execCommand('copy');
 		} catch (err) {
 			console.error('Oops, unable to copy');
 		} finally {
