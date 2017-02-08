@@ -95,8 +95,6 @@ $(function () {
 		$clipboardArea.val(text);
 
 		try {
-			var successful, msg;
-
 			$clipboardArea[0].select();
 			document.execCommand('copy');
 		} catch (err) {
